@@ -133,6 +133,7 @@ def only_numbers(char):
 root = tk.Tk()
 root.title("Student Management System")
 root.geometry("800x550")
+root.iconbitmap("icon.ico")
 
 create_database()
 
