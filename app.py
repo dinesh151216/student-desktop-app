@@ -22,6 +22,18 @@ def create_database():
 
 # ---------------- CRUD ----------------
 
+def update_status():
+    global status_label
+
+    conn = sqlite3.connect("students.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM students")
+    count = cursor.fetchone()[0]
+    conn.close()
+
+    status_label.config(text=f"Total Students: {count}")
+
+
 def save_student():
     global selected_id
 
@@ -56,12 +68,23 @@ def save_student():
 
     clear_fields()
     load_students()
+    update_status()
     selected_id = None
 
 def delete_student():
-    selected = table.focus()
+    global table
+
+    selected = table.selection()
     if not selected:
         messagebox.showerror("Error", "Select a student")
+        return
+
+    confirm = messagebox.askyesno(
+        "Confirm Delete",
+        "Are you sure you want to delete this student?"
+    )
+
+    if not confirm:
         return
 
     student_id = table.item(selected)["values"][0]
@@ -73,6 +96,8 @@ def delete_student():
     conn.close()
 
     load_students()
+    clear_fields()
+    update_status()
 
 def on_row_select(event):
     global selected_id
@@ -118,6 +143,7 @@ def load_students():
 
     for row in rows:
         table.insert("", tk.END, values=row)
+    update_status()
 
 def clear_fields():
     name_entry.delete(0, tk.END)
@@ -133,7 +159,7 @@ def only_numbers(char):
 root = tk.Tk()
 root.title("Student Management System")
 root.geometry("800x550")
-root.iconbitmap("icon.ico")
+root.iconbitmap(default="icon.ico")
 
 create_database()
 
@@ -192,6 +218,15 @@ for col in columns:
 table.bind("<<TreeviewSelect>>", on_row_select)
 
 table.pack(fill="both", expand=True)
+
+status_label = tk.Label(
+    root,
+    text="Total Students: 0",
+    anchor="w",
+    relief="sunken",
+    padx=10
+)
+status_label.pack(side="bottom", fill="x")
 
 load_students()
 
