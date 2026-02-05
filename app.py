@@ -216,9 +216,12 @@ def sort_column(col, reverse):
 
 
 # ---------------- UI ----------------
+APP_NAME = "Student Management System"
+APP_VERSION = "1.0.0"
+
 
 root = tk.Tk()
-root.title("Student Management System")
+root.title(f"{APP_NAME} v{APP_VERSION}")
 root.geometry("800x550")
 # root.iconbitmap(default="icon.ico")
 try:
