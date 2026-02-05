@@ -20,6 +20,8 @@ def create_database():
     conn.commit()
     conn.close()
 
+# ---------------- CRUD ----------------
+
 def save_student():
     global selected_id
 
@@ -54,7 +56,6 @@ def save_student():
 
 def delete_student():
     selected = table.focus()
-
     if not selected:
         messagebox.showerror("Error", "Select a student")
         return
@@ -71,7 +72,6 @@ def delete_student():
 
 def on_row_select(event):
     global selected_id
-
     selected = table.focus()
     values = table.item(selected)["values"]
 
@@ -124,36 +124,58 @@ def clear_fields():
 
 root = tk.Tk()
 root.title("Student Management System")
-root.geometry("700x550")
+root.geometry("800x550")
 
 create_database()
 
-tk.Label(root, text="Search").pack()
-search_entry = tk.Entry(root, width=40)
-search_entry.pack()
-tk.Button(root, text="Search", command=search_students).pack(pady=5)
+# -------- SEARCH BAR --------
 
-tk.Label(root, text="Name").pack()
-name_entry = tk.Entry(root, width=40)
-name_entry.pack()
+search_frame = tk.Frame(root)
+search_frame.pack(fill="x", padx=10, pady=5)
 
-tk.Label(root, text="Age").pack()
-age_entry = tk.Entry(root, width=40)
-age_entry.pack()
+tk.Label(search_frame, text="Search").pack(side="left")
+search_entry = tk.Entry(search_frame, width=40)
+search_entry.pack(side="left", padx=5)
+tk.Button(search_frame, text="Search", command=search_students).pack(side="left")
 
-tk.Label(root, text="Address").pack()
-address_entry = tk.Entry(root, width=40)
-address_entry.pack()
+# -------- FORM + BUTTONS --------
 
-tk.Button(root, text="Save / Update", command=save_student).pack(pady=5)
-tk.Button(root, text="Delete Selected", command=delete_student).pack(pady=5)
+middle_frame = tk.Frame(root)
+middle_frame.pack(fill="x", padx=10)
+
+form_frame = tk.Frame(middle_frame)
+form_frame.pack(side="left", padx=20)
+
+tk.Label(form_frame, text="Name").grid(row=0, column=0, sticky="w")
+name_entry = tk.Entry(form_frame, width=30)
+name_entry.grid(row=0, column=1, pady=3)
+
+tk.Label(form_frame, text="Age").grid(row=1, column=0, sticky="w")
+age_entry = tk.Entry(form_frame, width=30)
+age_entry.grid(row=1, column=1, pady=3)
+
+tk.Label(form_frame, text="Address").grid(row=2, column=0, sticky="w")
+address_entry = tk.Entry(form_frame, width=30)
+address_entry.grid(row=2, column=1, pady=3)
+
+button_frame = tk.Frame(middle_frame)
+button_frame.pack(side="left", padx=30)
+
+tk.Button(button_frame, text="Save / Update", width=15, command=save_student).pack(pady=5)
+tk.Button(button_frame, text="Delete", width=15, command=delete_student).pack(pady=5)
+tk.Button(button_frame, text="Clear", width=15, command=clear_fields).pack(pady=5)
+
+# -------- TABLE --------
+
+table_frame = tk.Frame(root)
+table_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
 columns = ("ID", "Name", "Age", "Address")
-table = ttk.Treeview(root, columns=columns, show="headings")
+table = ttk.Treeview(table_frame, columns=columns, show="headings")
 
 for col in columns:
     table.heading(col, text=col)
-    table.column(col, width=140)
+    table.column(col, width=180)
 
 table.bind("<<TreeviewSelect>>", on_row_select)
 
