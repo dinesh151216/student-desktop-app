@@ -1,6 +1,7 @@
 import tkinter as tk
 from config import APP_NAME,APP_VERSION
-from database import create_database
+from database_local import create_database
+# from database_supabase import create_database
 from splash import show_splash
 from ui import build_ui
 

@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from openpyxl import Workbook
-from crud import *
+from crud_local import *
+# from crud_supabase import *
 from config import APP_NAME, APP_VERSION
 from utils import resource_path
 
