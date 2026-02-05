@@ -33,6 +33,10 @@ def save_student():
         messagebox.showerror("Error", "All fields required")
         return
 
+    if not age.isdigit():
+        messagebox.showerror("Error", "Age must be a number")
+        return
+
     conn = sqlite3.connect("students.db")
     cursor = conn.cursor()
 
@@ -120,6 +124,10 @@ def clear_fields():
     age_entry.delete(0, tk.END)
     address_entry.delete(0, tk.END)
 
+def only_numbers(char):
+    return char.isdigit() or char == ""
+
+
 # ---------------- UI ----------------
 
 root = tk.Tk()
@@ -151,7 +159,10 @@ name_entry = tk.Entry(form_frame, width=30)
 name_entry.grid(row=0, column=1, pady=3)
 
 tk.Label(form_frame, text="Age").grid(row=1, column=0, sticky="w")
-age_entry = tk.Entry(form_frame, width=30)
+# age_entry = tk.Entry(form_frame, width=30)
+vcmd = (root.register(only_numbers), '%P')
+age_entry = tk.Entry(form_frame, width=30, validate="key", validatecommand=vcmd)
+
 age_entry.grid(row=1, column=1, pady=3)
 
 tk.Label(form_frame, text="Address").grid(row=2, column=0, sticky="w")
