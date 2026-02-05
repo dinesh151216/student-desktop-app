@@ -1,7 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
-from config import APP_NAME, APP_VERSION
 from utils import resource_path
+from dotenv import load_dotenv
+import os
+
+load_dotenv("config.env")
+
+APP_NAME = os.getenv("APP_NAME")
+APP_VERSION = os.getenv("APP_VERSION")
 
 def show_splash(root):
     splash = tk.Toplevel(root)
