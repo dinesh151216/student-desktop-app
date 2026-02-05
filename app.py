@@ -39,6 +39,23 @@ def save_student():
     clear_fields()
     load_students()
 
+def delete_student():
+    selected = table.focus()
+
+    if not selected:
+        messagebox.showerror("Error", "Select a student")
+        return
+
+    student_id = table.item(selected)["values"][0]
+
+    conn = sqlite3.connect("students.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM students WHERE id=?", (student_id,))
+    conn.commit()
+    conn.close()
+
+    load_students()
+
 def load_students():
     for row in table.get_children():
         table.delete(row)
@@ -61,7 +78,7 @@ def clear_fields():
 
 root = tk.Tk()
 root.title("Student Management System")
-root.geometry("600x450")
+root.geometry("600x500")
 
 create_database()
 
@@ -77,7 +94,8 @@ tk.Label(root, text="Address").pack()
 address_entry = tk.Entry(root, width=40)
 address_entry.pack()
 
-tk.Button(root, text="Save Student", command=save_student).pack(pady=10)
+tk.Button(root, text="Save Student", command=save_student).pack(pady=5)
+tk.Button(root, text="Delete Selected", command=delete_student).pack(pady=5)
 
 columns = ("ID", "Name", "Age", "Address")
 table = ttk.Treeview(root, columns=columns, show="headings")
