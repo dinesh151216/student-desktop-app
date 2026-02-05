@@ -153,6 +153,21 @@ def clear_fields():
 def only_numbers(char):
     return char.isdigit() or char == ""
 
+def sort_column(col, reverse):
+    global table
+
+    data = [(table.set(k, col), k) for k in table.get_children("")]
+
+    try:
+        data.sort(key=lambda t: int(t[0]), reverse=reverse)
+    except:
+        data.sort(reverse=reverse)
+
+    for index, (val, k) in enumerate(data):
+        table.move(k, "", index)
+
+    table.heading(col, command=lambda: sort_column(col, not reverse))
+
 
 # ---------------- UI ----------------
 
@@ -212,7 +227,7 @@ columns = ("ID", "Name", "Age", "Address")
 table = ttk.Treeview(table_frame, columns=columns, show="headings")
 
 for col in columns:
-    table.heading(col, text=col)
+    table.heading(col, text=col, command=lambda c=col: sort_column(c, False))
     table.column(col, width=180)
 
 table.bind("<<TreeviewSelect>>", on_row_select)
