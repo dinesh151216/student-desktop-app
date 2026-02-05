@@ -214,6 +214,15 @@ def sort_column(col, reverse):
 
     table.heading(col, command=lambda: sort_column(col, not reverse))
 
+def show_about():
+    messagebox.showinfo(
+        "About",
+        f"{APP_NAME}\n"
+        f"Version: {APP_VERSION}\n\n"
+        "Developed by Dinesh Dhankhar\n"
+        "© 2026"
+    )
+
 
 # ---------------- UI ----------------
 APP_NAME = "Student Management System"
@@ -224,6 +233,14 @@ root = tk.Tk()
 root.title(f"{APP_NAME} v{APP_VERSION}")
 root.geometry("800x550")
 # root.iconbitmap(default="icon.ico")
+menubar = tk.Menu(root)
+root.config(menu=menubar)
+
+help_menu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Help", menu=help_menu)
+
+help_menu.add_command(label="About", command=show_about)
+
 try:
     # root.iconbitmap("icon.ico")
     root.iconbitmap(resource_path("icon.ico"))
