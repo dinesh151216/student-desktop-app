@@ -84,6 +84,24 @@ def on_row_select(event):
         address_entry.delete(0, tk.END)
         address_entry.insert(0, values[3])
 
+def search_students():
+    keyword = search_entry.get()
+
+    for row in table.get_children():
+        table.delete(row)
+
+    conn = sqlite3.connect("students.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT * FROM students WHERE name LIKE ? OR address LIKE ?",
+        (f"%{keyword}%", f"%{keyword}%")
+    )
+    rows = cursor.fetchall()
+    conn.close()
+
+    for row in rows:
+        table.insert("", tk.END, values=row)
+
 def load_students():
     for row in table.get_children():
         table.delete(row)
@@ -106,9 +124,14 @@ def clear_fields():
 
 root = tk.Tk()
 root.title("Student Management System")
-root.geometry("650x500")
+root.geometry("700x550")
 
 create_database()
+
+tk.Label(root, text="Search").pack()
+search_entry = tk.Entry(root, width=40)
+search_entry.pack()
+tk.Button(root, text="Search", command=search_students).pack(pady=5)
 
 tk.Label(root, text="Name").pack()
 name_entry = tk.Entry(root, width=40)
@@ -130,7 +153,7 @@ table = ttk.Treeview(root, columns=columns, show="headings")
 
 for col in columns:
     table.heading(col, text=col)
-    table.column(col, width=130)
+    table.column(col, width=140)
 
 table.bind("<<TreeviewSelect>>", on_row_select)
 
