@@ -1,6 +1,7 @@
-import sqlite3
+import sqlite3, os
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, filedialog
+from openpyxl import Workbook
 
 selected_id = None
 
@@ -21,6 +22,42 @@ def create_database():
     conn.close()
 
 # ---------------- CRUD ----------------
+
+def export_to_excel():
+    global table
+
+    rows = table.get_children()
+    if not rows:
+        messagebox.showerror("Error", "No data to export")
+        return
+
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".xlsx",
+        filetypes=[("Excel Files", "*.xlsx")],
+        title="Save Excel File"
+    )
+
+    if not file_path:
+        return
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Students"
+
+    ws.append(["ID", "Name", "Age", "Address"])
+
+    for row in rows:
+        ws.append(table.item(row)["values"])
+
+    wb.save(file_path)
+
+    messagebox.showinfo("Success", "Excel exported successfully!")
+
+    try:
+        os.startfile(file_path)
+    except:
+        pass
+
 
 def update_status():
     global status_label
@@ -207,6 +244,8 @@ age_entry = tk.Entry(form_frame, width=30, validate="key", validatecommand=vcmd)
 
 age_entry.grid(row=1, column=1, pady=3)
 
+
+
 tk.Label(form_frame, text="Address").grid(row=2, column=0, sticky="w")
 address_entry = tk.Entry(form_frame, width=30)
 address_entry.grid(row=2, column=1, pady=3)
@@ -217,6 +256,7 @@ button_frame.pack(side="left", padx=30)
 tk.Button(button_frame, text="Save / Update", width=15, command=save_student).pack(pady=5)
 tk.Button(button_frame, text="Delete", width=15, command=delete_student).pack(pady=5)
 tk.Button(button_frame, text="Clear", width=15, command=clear_fields).pack(pady=5)
+tk.Button(button_frame, text="Export Excel", width=15, command=export_to_excel).pack(pady=5)
 
 # -------- TABLE --------
 
