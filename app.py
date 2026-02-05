@@ -1,4 +1,4 @@
-import sqlite3, os
+import sqlite3, os, sys
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 from openpyxl import Workbook
@@ -22,6 +22,15 @@ def create_database():
     conn.close()
 
 # ---------------- CRUD ----------------
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 
 def export_to_excel():
     global table
@@ -211,7 +220,14 @@ def sort_column(col, reverse):
 root = tk.Tk()
 root.title("Student Management System")
 root.geometry("800x550")
-root.iconbitmap(default="icon.ico")
+# root.iconbitmap(default="icon.ico")
+try:
+    # root.iconbitmap("icon.ico")
+    root.iconbitmap(resource_path("icon.ico"))
+
+except:
+    pass
+
 
 create_database()
 
