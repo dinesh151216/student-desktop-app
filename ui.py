@@ -1,10 +1,16 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from openpyxl import Workbook
-from crud_local import *
-# from crud_supabase import *
-from config import APP_NAME, APP_VERSION
+# from crud_local import *
+from crud_supabase import *
 from utils import *
+from dotenv import load_dotenv
+import os
+
+load_dotenv("config.env")
+
+APP_NAME = os.getenv("APP_NAME")
+APP_VERSION = os.getenv("APP_VERSION")
 
 table = None
 name_entry = age_entry = address_entry = search_entry = status_label = None

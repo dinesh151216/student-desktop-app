@@ -1,9 +1,18 @@
 from database_supabase import get_connection
+from tkinter import messagebox
 
 selected_id = None
 
-def save_student(name, age, address):
-    global selected_id
+def save_student(name, age, address, selected_id):
+
+    if name == "" or age == "" or address == "":
+        messagebox.showerror("Error", "All fields required")
+        return
+
+    if not age.isdigit():
+        messagebox.showerror("Error", "Age must be a number")
+        return
+    
     conn = get_connection()
     cur = conn.cursor()
 
