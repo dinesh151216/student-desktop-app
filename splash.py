@@ -16,37 +16,45 @@ def show_splash(root):
         splash.attributes("-alpha", alpha)
         if alpha < 1:
             splash.after(30, lambda: fade(alpha))
+
     fade()
 
-    original_logo = tk.PhotoImage(
-        file=resource_path("logo.png")
-    )
+    # ---------- LOGO (AUTO SCALE) ----------
+    original_logo = tk.PhotoImage(file=resource_path("logo.png"))
 
-    max_size = 180
-    scale = max(
-        original_logo.width() // max_size,
-        original_logo.height() // max_size,
-        1
-    )
+    max_size = 180   # max width/height allowed
+    scale_w = max(1, original_logo.width() // max_size)
+    scale_h = max(1, original_logo.height() // max_size)
+    scale = max(scale_w, scale_h)
 
     logo = original_logo.subsample(scale, scale)
-    lbl = tk.Label(splash, image=logo, bg="white")
-    lbl.image = logo
-    lbl.pack(pady=15)
 
-    tk.Label(
-        splash, text=APP_NAME,
+    logo_label = tk.Label(splash, image=logo, bg="white")
+    logo_label.image = logo
+    logo_label.pack(pady=15)
+    # ---------------------------------------
+
+    title = tk.Label(
+        splash,
+        text=APP_NAME,
         font=("Segoe UI", 16, "bold"),
         bg="white"
-    ).pack()
+    )
+    title.pack()
 
-    tk.Label(
+    version = tk.Label(
         splash,
         text=f"Version {APP_VERSION}",
         bg="white"
-    ).pack(pady=5)
+    )
+    version.pack(pady=5)
 
-    bar = ttk.Progressbar(splash, length=250)
+    bar = ttk.Progressbar(
+        splash,
+        orient="horizontal",
+        length=250,
+        mode="determinate"
+    )
     bar.pack(pady=25)
 
     def load():
