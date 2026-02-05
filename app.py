@@ -2,6 +2,8 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox, ttk
 
+selected_id = None
+
 # ---------------- DATABASE ----------------
 
 def create_database():
@@ -19,6 +21,8 @@ def create_database():
     conn.close()
 
 def save_student():
+    global selected_id
+
     name = name_entry.get()
     age = age_entry.get()
     address = address_entry.get()
@@ -29,15 +33,24 @@ def save_student():
 
     conn = sqlite3.connect("students.db")
     cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO students (name, age, address) VALUES (?, ?, ?)",
-        (name, age, address)
-    )
+
+    if selected_id is None:
+        cursor.execute(
+            "INSERT INTO students (name, age, address) VALUES (?, ?, ?)",
+            (name, age, address)
+        )
+    else:
+        cursor.execute(
+            "UPDATE students SET name=?, age=?, address=? WHERE id=?",
+            (name, age, address, selected_id)
+        )
+
     conn.commit()
     conn.close()
 
     clear_fields()
     load_students()
+    selected_id = None
 
 def delete_student():
     selected = table.focus()
@@ -55,6 +68,21 @@ def delete_student():
     conn.close()
 
     load_students()
+
+def on_row_select(event):
+    global selected_id
+
+    selected = table.focus()
+    values = table.item(selected)["values"]
+
+    if values:
+        selected_id = values[0]
+        name_entry.delete(0, tk.END)
+        name_entry.insert(0, values[1])
+        age_entry.delete(0, tk.END)
+        age_entry.insert(0, values[2])
+        address_entry.delete(0, tk.END)
+        address_entry.insert(0, values[3])
 
 def load_students():
     for row in table.get_children():
@@ -78,7 +106,7 @@ def clear_fields():
 
 root = tk.Tk()
 root.title("Student Management System")
-root.geometry("600x500")
+root.geometry("650x500")
 
 create_database()
 
@@ -94,7 +122,7 @@ tk.Label(root, text="Address").pack()
 address_entry = tk.Entry(root, width=40)
 address_entry.pack()
 
-tk.Button(root, text="Save Student", command=save_student).pack(pady=5)
+tk.Button(root, text="Save / Update", command=save_student).pack(pady=5)
 tk.Button(root, text="Delete Selected", command=delete_student).pack(pady=5)
 
 columns = ("ID", "Name", "Age", "Address")
@@ -103,6 +131,8 @@ table = ttk.Treeview(root, columns=columns, show="headings")
 for col in columns:
     table.heading(col, text=col)
     table.column(col, width=130)
+
+table.bind("<<TreeviewSelect>>", on_row_select)
 
 table.pack(fill="both", expand=True)
 
