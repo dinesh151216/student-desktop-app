@@ -1,9 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework import status
 from .models import Student
 from .serializers import StudentSerializer
-
+from django.db.models import Q
 
 @api_view(['GET'])
 def get_students(request):
@@ -37,6 +38,17 @@ def delete_student(request, id):
 @api_view(['GET'])
 def search_students(request):
     keyword = request.GET.get('q')
-    students = Student.objects.filter(name__icontains=keyword)
+    students = Student.objects.filter(
+        Q(name__icontains=keyword) |
+        Q(address__icontains=keyword) |
+        Q(age__icontains=keyword) |
+        Q(id__icontains=keyword)
+    )
     serializer = StudentSerializer(students, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def count_students(request):
+    total = Student.objects.count()
+    return JsonResponse({"count": total})

@@ -1,5 +1,5 @@
 import tkinter as tk
-from database_supabase import create_database
+from api_client import *
 from splash import show_splash
 from ui import build_ui
 from pathlib import Path
@@ -17,7 +17,7 @@ show_splash(root)
 root.title(f"{APP_NAME} v{APP_VERSION}")
 root.geometry("800x550")
 
-create_database()
+# create_database()
 build_ui(root)
 
 root.mainloop()
